@@ -14,3 +14,6 @@ A quadtree is a hierarchical data structure that divides a two-dimensional space
 -  Logarithmic Time Complexity - runtime proportional to the logarithm of the number of points instead of n².
 
 -  Recursive Structure - The quadtree employs a recursive structure that simplifies the detection process by traversing through the quadrants recursively.
+
+![](https://github.com/mkhodr/quadtree/blob/main/quadtree.png)
+![](https://github.com/mkhodr/quadtree/blob/main/quadtree-zoom.png)
