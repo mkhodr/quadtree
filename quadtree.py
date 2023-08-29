@@ -1,12 +1,29 @@
 import matplotlib.pyplot as plt
 import random
 
-random.seed(1111)
+
 
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+class Circle:
+    def __init__(self, x, y, r):
+        self.x = x
+        self.y = y
+        self.r = r
+    
+    def contains(self, point):
+        distance_squared = (point.x - self.x)**2 + (point.y - self.y)**2
+        return distance_squared <= self.r**2
+    
+    def intersects(self, rectangle):
+        in_circlest_x = max(rectangle.x, min(self.x, rectangle.x + rectangle.width))
+        in_circlest_y = max(rectangle.y, min(self.y, rectangle.y + rectangle.height))
+        
+        distance_squared = (self.x - in_circlest_x)**2 + (self.y - in_circlest_y)**2
+        return distance_squared <= self.r**2
 
 class Rectangle:
     def __init__(self, x, y, width, height):
@@ -127,23 +144,36 @@ def main():
 
     point = Point(200,150)
     rect = Rectangle(0,0,0,0)
-    rect = rect.center(point=point)
+    rect = rect.center(point=point, width=100, height=100)
+    circle = Circle(90,350,90)
 
-    close = root.query(rect)
-    print(len(close))
-    inrange_x = [p.x for p in close]
-    inrange_y = [p.y for p in close]
+    in_circle = root.query(circle)
+    print(len(in_circle))
+    in_circle_x = [p.x for p in in_circle]
+    in_circle_y = [p.y for p in in_circle]
+
+    in_rect = root.query(rect)
+    print(len(in_circle))
+    in_rect_x = [p.x for p in in_rect]
+    in_rect_y = [p.y for p in in_rect]
 
 
     visualize_quadtree(root, ax)
     ax.add_patch(plt.Rectangle((rect.x, rect.y), rect.width, rect.height, fill=False, color='red'))
+    ax.add_patch(plt.Circle((circle.x, circle.y), circle.r , fill=False, color='red'))
 
-    points_x = [point.x for point in points]
-    points_y = [point.y for point in points]
+    points_x = [point.x for point in points if point not in in_circle if point not in in_rect]
+    points_y = [point.y for point in points if point not in in_circle if point not in in_rect]
     
-    ax2.scatter(points_x, points_y)
-    ax2.scatter(inrange_x, inrange_y, marker='>',c='green')
-    ax2.scatter(point.x, point.y, marker='^',)
+    ## all points
+    ax2.scatter(points_x, points_y, marker='.')
+    ## circle points
+    ax2.scatter(circle.x, circle.y, marker='^', c='red', s=10**2)
+    ax2.scatter(in_circle_x, in_circle_y, marker='.',c='green')
+    ## rect points
+    ax2.scatter(rect.x+rect.width/2, rect.y+rect.height/2, marker='^', c='red', s=10**2)
+    ax2.scatter(in_rect_x, in_rect_y, marker='.',c='green')
+
     plt.gca().set_aspect('equal', adjustable='box')
 
     plt.show()
